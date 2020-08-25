@@ -5,7 +5,7 @@ const net = require('net');
  */
 const connect = function() {
   const conn = net.createConnection({ 
-    host: '10.0.2.15',
+    host: 'localhost',
     port: 50541
   });
   // interpret incoming data as text
@@ -13,8 +13,7 @@ const connect = function() {
 
   conn.on('connect', () => {
     console.log('Successfully connected to game server');
-    conn.write("Name: KRG");
-    
+    conn.write("Name: KRG"); 
   });
 
   conn.on('data', (data) => {
@@ -23,8 +22,27 @@ const connect = function() {
   
   return conn;
 }
+
+
+const setupInput = function() {
+  const stdin = process.stdin;
+  stdin.setRawMode(true);
+  stdin.setEncoding('utf8');
+  stdin.resume();
+
+  const handleUserInput = function() {
+    stdin.on('data', (key) => {
+      if (key === '\u0003') {
+      process.exit();
+    }
+    })
+  };
+  handleUserInput();
+  return stdin;
+}
+setupInput();
+
 console.log('Connecting ...');
 connect();
-
 
 module.exports = connect;
